@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model RetroBoard {
+  id        String        @id @default(cuid())
+  title     String
+  status    String        @default("SET_STAGE") // SET_STAGE, BRAINSTORM, GROUP, VOTE, ACTIONS, CLOSED
+  items     RetroItem[]
+  actions   RetroAction[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model RetroItem {
+  id        String     @id @default(cuid())
+  boardId   String
+  board     RetroBoard @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  author    String
+  text      String
+  category  String     @default("WENT_WELL") // WENT_WELL, TO_IMPROVE, ACTION_ITEMS
+  group     String?    // UUID or string of group
+  votes     Int        @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model RetroAction {
+  id        String     @id @default(cuid())
+  boardId   String
+  board     RetroBoard @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  text      String
+  assignee  String?
+  completed Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model HealthCheckBoard {
+  id        String              @id @default(cuid())
+  title     String
+  metrics   HealthCheckMetric[]
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+}
+
+model HealthCheckMetric {
+  id        String           @id @default(cuid())
+  boardId   String
+  board     HealthCheckBoard @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  author    String
+  dimension String           // e.g. "Support", "Codebase", "Morale"
+  rating    String           // "RED", "YELLOW", "GREEN"
+  comment   String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
