@@ -3,11 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node server.js",
+    "dev": "next dev",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js",
-    "lint": "next lint",
-    "postinstall": "prisma generate"
+    "start": "next start",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@prisma/client": "^6.19.2",
